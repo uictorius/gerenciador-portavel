@@ -1333,11 +1333,10 @@ class App {
         const confirm = confirmInput ? confirmInput.value : '';
         
         // Validação
-        if (!Security.validate(password, 128)) {
-            this.showToast('Senha contém caracteres inválidos', 'error');
+        if (!Security.validate(password, 8, 128)) {
+            this.showToast('Senha deve ter entre 8 e 128 caracteres sem caracteres inválidos', 'error');
             return;
         }
-        
         // Desabilita botão durante processamento
         btn.disabled = true;
         
@@ -1352,14 +1351,18 @@ class App {
                     this.showToast('Senha incorreta', 'error');
                 }
             } else {
-                // Registro
-                if (password !== confirm) {
-                    this.showToast('Senhas não coincidem', 'error');
-                    return;
-                }
-                
-                await this.store.createVault(password);
-                this.enterDashboard();
+// Registro
+if (!Security.validate(confirm, 8, 128)) {
+    this.showToast('Confirmação de senha deve ter entre 8 e 128 caracteres sem caracteres inválidos', 'error');
+    return;
+}
+if (password !== confirm) {
+    this.showToast('Senhas não coincidem', 'error');
+    return;
+}
+
+await this.store.createVault(password);
+this.enterDashboard();
             }
         } finally {
             // Limpa campos e reabilita botão
@@ -1383,9 +1386,9 @@ class App {
         const passwordInput = document.getElementById('authPwd');
         const password = passwordInput.value;
         
-        if (!Security.validate(password, 128)) {
-            this.showToast('Senha inválida', 'error');
-            return;
+        if (!Security.validate(password, 8, 128)) {
+            this.showToast('Senha deve ter entre 8 e 128 caracteres sem caracteres inválidos', 'error');
+           return;
         }
         
         const success = await this.store.reAuthenticate(password);
